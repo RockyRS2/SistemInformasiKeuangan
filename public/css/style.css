@@ -1,0 +1,25 @@
+.bg-custom-keuangan {
+    background-color: #81E7AF;
+    padding: 1.5rem;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #198754;
+    color: white;
+    height: 105vh;
+    position: relative;
+  }
+  .sidebar a {
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+    display: block;
+  }
+  .sidebar a:hover {
+    background-color: #145c32;
+  }
+  .content {
+    flex-grow: 1;
+    padding: 20px;
+  }
