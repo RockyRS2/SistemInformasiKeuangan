@@ -2,10 +2,18 @@
 
 @section('content')
     <div class="container mt-5">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1>Dashboard Admin</h1>
-            <a href="{{ route('admin.users.create') }}" class="btn btn-primary">Add New User</a>
-        </div>
+      <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="mb-0">Dashboard Admin</h1>
+    <div class="d-flex gap-2">
+        <a href="{{ route('admin.users.export.pdf') }}" class="btn btn-outline-danger">
+            Export PDF
+        </a>
+        <a href="{{ route('admin.users.create') }}" class="btn btn-primary">
+            Add New User
+        </a>
+    </div>
+</div>
+
 
         <p>Selamat datang, {{ auth()->user()->name }}! Ini adalah dashboard admin.</p>
 

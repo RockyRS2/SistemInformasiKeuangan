@@ -2,6 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\Admin\TransactionController;
+use App\Models\Transaction;
+use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Http\Controllers\Admin\TransactionLogController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,7 +20,7 @@ use App\Http\Controllers\UserController;
 */
 
 Route::get('/', function () {
-    return view('welcome',[
+    return view('welcome', [
         'aspek' => [
             [
                 'judul' => 'Pemasukan',
@@ -50,9 +55,13 @@ Route::post('/logout', [UserController::class, 'logout'])->name('logout');
 // })->name('admin.dashboard')->middleware('auth');
 
 // Dashboard User
-Route::get('/user/dashboard', function () {
-    return view('user.dashboard');
-})->name('user.dashboard')->middleware('auth');
+Route::get('/user/dashboard', [TransactionController::class, 'userIndex'])
+    ->name('user.dashboard')
+    ->middleware('auth');
+Route::get('/user/transactions/export/pdf', [\App\Http\Controllers\UserController::class, 'exportUserTransactionPdf'])
+    ->name('user.transactions.export.pdf')
+    ->middleware('auth');
+
 
 Route::prefix('admin')->middleware(['auth', 'can:admin'])->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\Admin\UserController::class, 'dashboard'])->name('admin.dashboard');
@@ -62,4 +71,32 @@ Route::prefix('admin')->middleware(['auth', 'can:admin'])->group(function () {
     Route::put('/users/{user}', [\App\Http\Controllers\Admin\UserController::class, 'update'])->name('admin.users.update');
     Route::delete('/users/{user}', [\App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('admin.users.destroy');
     Route::get('/users/{user}', [\App\Http\Controllers\Admin\UserController::class, 'show'])->name('admin.users.show');
+    // CRUD Transaksi
+    Route::get('/transactions', [TransactionController::class, 'index'])->name('admin.transactions.dashboard'); // Halaman utama
+    Route::get('/transactions/create', [TransactionController::class, 'create'])->name('admin.transactions.create'); // Form tambah
+    Route::post('/transactions', [TransactionController::class, 'store'])->name('admin.transactions.store'); // Simpan data
+    Route::get('/transactions/{transaction}/edit', [TransactionController::class, 'edit'])->name('admin.transactions.edit'); // Form edit
+    Route::put('/transactions/{transaction}', [TransactionController::class, 'update'])->name('admin.transactions.update'); // Proses update
+    Route::delete('/transactions/{transaction}', [TransactionController::class, 'destroy'])->name('admin.transactions.destroy');
+
+
+    // Export Transaksi
+    Route::get('/transactions/export/pdf', function () {
+        $transactions = \App\Models\Transaction::with('user')->get();
+        $pdf = Pdf::loadView('admin.transaction_pdf', compact('transactions'));
+        return $pdf->download('semua_transaksi.pdf');
+    })->name('transactions.export.pdf');
+
+
+    //export user
+    Route::get('/admin/users/export/pdf', function () {
+        $users = \App\Models\User::all();
+        $pdf = Pdf::loadView('admin.user_pdf', compact('users'));
+        return $pdf->download('data_user.pdf');
+    })->name('admin.users.export.pdf');
+
+    //export transaksi
+    Route::get('/admin/transaction-logs', [TransactionLogController::class, 'index'])->name('admin.transactionlog.index');
+Route::get('/admin/transaction-logs/export/pdf', [TransactionLogController::class, 'exportPdf'])->name('admin.transactionlog.export.pdf');
+
 });

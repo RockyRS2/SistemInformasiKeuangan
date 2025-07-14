@@ -2,25 +2,37 @@
 
 @section('content')
 <div class="container mt-5">
-    <h1>Dashboard User</h1>
-    <p>Selamat datang, {{ auth()->user()->name }}! Ini adalah dashboard user biasa.</p>
+    <h2>Transaksi Saya</h2>
+    <a href="{{ route('user.transactions.export.pdf') }}" class="btn btn-outline-danger mb-3">
+    Export Transaksi Saya ke PDF
+</a>
 
-    <div class="bg-white p-4 rounded shadow-lg mb-4">
 
-      <div class="row align-items-center ">
-      <!-- Kiri: Teks -->
-      <div class="col-md-6 text-center text-md-start mb-4 mb-md-0">
-        <h1>Memanajemen Keuangan Bersama</h1>
-      </div>
-
-      <!-- Kanan: Gambar -->
-      <div class="col-md-6 text-center">
-        <img src="https://www.distri.id/wp-content/uploads/sites/2/2022/06/cover-article.png" class="img-fluid"
-        alt="Gambar Keuangan">
-      </div>
-      </div>
-    </div>
+    @if($transactions->count())
+        <table class="table table-bordered mt-3">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Jenis</th>
+                    <th>Jumlah</th>
+                    <th>Tanggal</th>
+                    <th>Keterangan</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($transactions as $transaction)
+                    <tr>
+                        <td>{{ $transaction->id }}</td>
+                        <td>{{ ucfirst($transaction->type) }}</td>
+                        <td>Rp{{ number_format($transaction->amount, 0, ',', '.') }}</td>
+                        <td>{{ $transaction->transaction_date }}</td>
+                        <td>{{ $transaction->description ?? '-' }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    @else
+        <div class="alert alert-info">Belum ada transaksi.</div>
+    @endif
 </div>
-
-    
 @endsection

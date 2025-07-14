@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Transaction;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Carbon;
 
 class UserController extends Controller
 {
@@ -69,6 +72,15 @@ class UserController extends Controller
 
         return redirect('/login');
     }
+
+    public function exportUserTransactionPdf()
+{
+    $transactions = Transaction::where('user_id', Auth::id())->get();
+
+    $pdf = Pdf::loadView('user.transaction_pdf', compact('transactions'));
+
+    return $pdf->download('transaksi_saya_' . Carbon::now()->format('Ymd_His') . '.pdf');
+}
 }
 
 

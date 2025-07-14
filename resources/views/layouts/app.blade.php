@@ -8,28 +8,32 @@
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 </head>
-<body>
-   @auth
-        @if(Auth::user()->isAdmin()) {{-- ganti sesuai kondisi user admin kamu --}}
-        <div class="d-flex">
-            @include('partials.sidebar')
-            <div class="flex-grow-1 p-4">
-                @yield('content')
-                
+<body class="d-flex flex-column min-vh-100">
+    @auth
+        @if(Auth::user()->isAdmin())
+            <div class="d-flex">
+                @include('partials.sidebar')
+                <div class="flex-grow-1 p-4">
+                    @yield('content')
+                </div>
             </div>
-            
-        </div>
         @else
             @include('partials.navbar')
-            @yield('content')
+            
+            <div class="flex-grow-1 container my-4">
+                @yield('content')
+            </div>
+
             @include('partials.footer')
         @endif
     @else
         @include('partials.navbar')
-        @yield('content')
+
+        <div class="flex-grow-1  ">
+            @yield('content')
+        </div>
+
         @include('partials.footer')
     @endauth
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 </body>
 </html>
